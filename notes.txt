@@ -1,11 +1,13 @@
-Random 4 letter words generator (valid English words)	 #check
-Input validation: Compare Asciiz, must have 4 chars, !end (to end the game)
-Compare each chars with the result chars
-	ex: Input : CATE			#result = ATEC
+1.	Random 4 letter words generator (valid English words)	 #check (long string)(Ken)
+2.	Input validation: Must have 4 chars, !end (to end the game) (Sean)
+3.	Compare each chars with the result chars (ASCIIZ)(Toan and Ken)
+	ex:     Input : CATE			#result = ATEC
              	      0 Bull and 4 Cow	#meaning 4 chars in the result but misplaced
-      Input : ACET
+      		Input : ACET
 		      2 Bull and 4 Cow	#meaning 4 chars in the result but 2 of them are misplaced
+		Input : !end		#or the guess is correct (Sean)
+       		ATEC
+4.	Output: the right word and time spent (Caleb)
 
-	      Input : !end		#or the guess is correct
-       ATEC	     Time:..
-Extra feature:
+Extra feature: Output sound
+

@@ -1,0 +1,25 @@
+Status as of now:
+  1. Understood the game and the requirements
+  2. Divide the task among team members
+  3. Set up central repository in github so that members can colaborate on the project
+  
+Project plan:
+  Milestone 1 (Oct 23rd, 2018): 
+    1. Finish generate a random word from a dictionary
+    2. User input validation.
+    3. Main algorithm to count number of bulls and cows
+    4. Functional testing
+  
+  Milestone 2: (Nov 2rd, 2018):
+    1. Integrate the code from members together
+    2. Integration testing, make sure components work together
+   
+  Milestone 3 (Nov 14th, 2018):
+    1. Add extra features.
+    2. Final touching / comments / improvement
+    3. Documentation / user manual / video
+  
+Role for each member:
+  1. Sean: input validation
+  2. Caleb: extra feature / documentation / handle output for the game
+  3. Toan and Cuong: cow and bull algorithm

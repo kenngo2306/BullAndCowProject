@@ -1,11 +1,11 @@
 .data
-word:	.asciiz "BABE"	#assigned word
-input:	.asciiz "Get input: "
+word:	.asciiz "TONS"	#assigned word
+input:	.asciiz "\nGet input: "
 buffer:	.space	20
 endl:	.asciiz "\n"
 bull:	.word 0		#count BULLs
-counter:.word 0		#get the next index
-index:	.word 0		#count the index till it reaches 4 then ends
+guess_index:.word 0		#get the next index
+result_index:	.word 0		#count the result_index till it reaches 4 then ends
 ans:	.asciiz		#holds the input of the user
 
 
@@ -17,15 +17,15 @@ main:
 	add $t4, $zero, $zero
 	sw $t4, bull
 	
-	#reset index
-	lw $t4, index
+	#reset result_index
+	lw $t4, result_index
 	add $t4, $zero, $zero
-	sw $t4, index
+	sw $t4, result_index
 	
-	#reset counter
-	lw $t4, counter
+	#reset guess_index
+	lw $t4, guess_index
 	add $t4, $zero, $zero
-	sw $t4, counter
+	sw $t4, guess_index
 	
 	li $v0, 4
 	la $a0, input
@@ -47,7 +47,7 @@ main:
 	
 	
 getIndex:
-	lw $s0, counter
+	lw $s0, guess_index
 	la $t0, word
 	lw $t1, ans
 	
@@ -61,7 +61,7 @@ getIndex:
 	
 	#get the next index for the next loop
 	addi $s0, $s0, 1
-	sw $s0, counter
+	sw $s0, guess_index
 	
 	#BULL
 	beq $t2, $t3, equal
@@ -74,23 +74,23 @@ equal:
 	sw $t4, bull
 	
 	#increment the index ( < 4)
-	lw $t4, index
+	lw $t4, result_index
 	addi $t4, $t4, 1
-	sw $t4, index
+	sw $t4, result_index
 	
 	#check if index = 4 -> output
-	lw $t4, index
+	lw $t4, result_index
 	beq $t4, 4, output
 	j getIndex
 	
 encounter:
-	#increment the index ( <=4)
-	lw $t4, index
+	#increment the result_index ( <=4)
+	lw $t4, result_index
 	addi $t4, $t4, 1
-	sw $t4, index
+	sw $t4, result_index
 	
-	#heck if index = 4
-	lw $t4, index
+	#heck if result_index = 4
+	lw $t4, result_index
 	beq $t4, 4, output
 	j getIndex
 	

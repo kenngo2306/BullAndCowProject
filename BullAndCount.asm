@@ -1,7 +1,8 @@
 .data
+bullPrint:	.asciiz " Bull"
 word:	.asciiz "TONS"	#assigned word
-input:	.asciiz "\nGet input: "
-buffer:	.space	20
+input:	.asciiz "Get input: "
+buffer:	.space	36
 endl:	.asciiz "\n"
 bull:	.word 0		#count BULLs
 guess_index:.word 0		#get the next index
@@ -103,6 +104,10 @@ output:
 	move $a0, $t4
 	syscall
 	
+	li $v0, 4
+	la $a0, bullPrint
+	syscall
+	
 	#end Line
 	li $v0, 4
 	la $a0, endl
@@ -115,7 +120,3 @@ output:
 exit:
 	li $v0, 10
 	syscall
-	
-	
-	
-	

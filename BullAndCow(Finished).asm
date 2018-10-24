@@ -1,5 +1,5 @@
 .data
-bullPrint:	.asciiz " Bull"
+bullPrint:	.asciiz " Bull "
 cowPrint:	.asciiz " Cow"
 result:	.asciiz "NOAR"	#assigned word
 input:	.asciiz "Get input: "
@@ -14,6 +14,7 @@ guess:	.asciiz		#holds the input of the user
 .text
 
 main:
+	#print out "Get input: "
 	li $v0, 4
 	la $a0, input
 	syscall
@@ -33,19 +34,19 @@ main:
 
 outterWhile:
 	lw $t1, r_index		#t1 = r_index
-	bgt $t1, 3, endResult
+	bgt $t1, 3, endResult	#Finish condition (when r_index actually >3)
 
 	lw $t0, g_index
-	add $t0, $zero, $zero
+	add $t0, $zero, $zero	#reset g_index to zero before loop through innerWhile
 	sw $t0, g_index
 
 innerWhile:
 	lw $t0, g_index		#t0 = g_index
 	lw $t1, r_index		#t1 = r_index
 	
-	bgt $t0, 3, inR
+	bgt $t0, 3, inR		#increment r_index
 	
-	bne $t0, $t1, cowEqual
+	bne $t0, $t1, cowEqual		#if the 2 index dont match -> check for cow
 
 	la $t0, result
 	lw $t1, guess
@@ -53,14 +54,16 @@ innerWhile:
 	lw $s0, r_index
 	lw $s1, g_index
 	
+	#compare the 2 letter at index r (for result) and index g (for guess)
 	addu $t0, $t0, $s0
 	lbu $t2, ($t0)
 	
 	addu $t1, $t1, $s1
 	lbu $t3, ($t1)
 	
+	#if they are equal and by last condition of the 2 index being equal -> bull
 	beq $t2, $t3, bullEqual
-	j inG
+	j inG		#increment g_index
 	
 
 bullEqual:
@@ -70,7 +73,7 @@ bullEqual:
 	
 	j inG
 
-cowEqual:
+cowEqual:	#when the r_index != g_index -> go here
 	la $t0, result
 	lw $t1, guess
 	
@@ -83,7 +86,7 @@ cowEqual:
 	addu $t1, $t1, $s1
 	lbu $t3, ($t1)
 	
-	beq $t2, $t3, cowEqual2
+	beq $t2, $t3, cowEqual2		#condition if the 2 index actual equal -> cow +1
 	j inG
 
 cowEqual2:
@@ -95,15 +98,16 @@ inG:
 	lw $t0, g_index
 	addi $t0, $t0, 1
 	sw $t0, g_index
-	j innerWhile
+	j innerWhile		#loop back again till g_index > 3
 
 inR:
 	lw $t0, r_index
 	addi $t0, $t0, 1
 	sw $t0, r_index
-	j outterWhile
+	j outterWhile		#loop back again till r_index > 3
 	
 endResult:
+	#display the number of bull
 	li $v0, 1
 	lw $t4, bull
 	move $a0, $t4
@@ -111,11 +115,6 @@ endResult:
 	
 	li $v0, 4
 	la $a0, bullPrint
-	syscall
-	
-	#end Line
-	li $v0, 4
-	la $a0, endl
 	syscall
 	
 	li $v0, 1

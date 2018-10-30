@@ -39,20 +39,13 @@
 			li $v0, 8
 			la $a0, buffer
 			li $a1, 5
-			move $t1,$a0 	#save string to t0
 			syscall
-			sw $t1, guess	  
+			move $t1,$a0 	#save string to t0
+			sw $t1, guess	#This needs to be recoded, it just copies the address of the buffer to guess.
+					#Saving the guess may not even be required
  	  	
  	  # validation code goes here					
- 	  	#### Sean's code #####		
-			#Print prompt
-			#li	$v0, 4
-			#la	$a0, Prmpt
-			#syscall
-			#Get input string
-			#li	$v0, 8
-			#la	$a0, inp
-			#li	$a1, 5
+ 	  	#### Sean's code ####
 			#syscall
 			#lb	$t0, inp
 			#li	$t1, 33 # !

@@ -1,8 +1,8 @@
 .data
 	dict: .asciiz "zoicfoxyjawszipszingbruxcalxvextminxfauxoyezjogsquodcruxjagsjoysquinjudozigszagsgazebucklynxjoshjoeyhazepuckplexjigsquizjeuxjinxjockjackjumpjambjokyjivyjunkjimpjaukphizzoukzonkjukechezcozyzymemazyjoukqophjinkwhizfozyjokejakezebufujijowlpujajerkjaupjivejaggzeksjupefuzeputzhazykojizincfutzjubazerkjucojubequipwaxyjehujugsjowsdozylazyfluxmazeczarfazepixyjohnboxyjibejugajibsbizejuryjobsprezjabsfrizjapepoxyzepsjamsquayzanyyutzzapsqueyzarfquaghadj"
-	correct_word: .space 4								# used to store correct word 
-	random_number: .word 4								# used to store random number
-	random_max_value: .word 110							# used to set max number of word
+	correct_word: .space 4									# used to store correct word 
+	random_number: .word 4									# used to store random number
+	random_max_value: .word 110								# used to set max number of word
 	inp:	.space 5
 .text
 

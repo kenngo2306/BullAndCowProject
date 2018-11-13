@@ -28,6 +28,7 @@
  		syscall
  	  ################## end of generate random word ############################	
  	  
+ 	  #The rest of this needs to be on a loop, right?
  	  
  	  # get input from user
  			#print out "Get input: "
@@ -46,15 +47,36 @@
  	  	
  	  # validation code goes here					
  	  	#### Sean's code ####
-			#syscall
-			#lb	$t0, inp
-			#li	$t1, 33 # !
-			#beq	$t0, $t1, giveup
-			#slti	$t1, $t0, 97
-			#li	$t2, 122
-			#slt	$t2, $t2, $t0
-			#and	$t1, $t1, $t2
-			#beq
+			li	$t8, 0			# Potential problem: code reads bytes from most to least significant.
+			# li	$t8, 24			# If the syscall reads them the other way, it can be reverse by using
+							# the commented assembly.
+			li	$t7, 32
+			lw	$t9, buffer		# t9 is now the entire read word
+			srl	$t0, $t9, 24		# $t0 is the working char, wchar
+			# sllv	$t0, $t9, $t8
+			# srl	$t0, $t0, 24
+			li	$t1, 33 		# if it is ! ...
+			beq	$t0, $t1, giveup	# ... it might be !END, so jump to giveup.
+		validloop:
+				slti	$t1, $t0, 65 		# A
+				li	$t2, 90 		# Z
+				slt	$t2, $t2, $t0
+				and	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
+				bne	$t1, $zero, next	# If yes...
+				addi	$t0, $t0, 32 		# ...Upper to lower case
+				slti	$t0, $t1, 97 		# a
+				li	$t2, 122		# z
+				slt	$t2, $t2, $t0
+				and	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
+				beq	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
+				
+				#checking  for byte done, loop:
+				
+				addi	$t8, $t8, 8		# Increment the byte being read by 1
+				# addi	$t8, $t8, -8
+				sllv	$t0, $t9, $t7		# remove left bytes
+				srl	$t0, $t0, 24		# remove right bytes and align
+				bne	$t8, $t7, validloop	# If $t8 was 32, no byte was read and we're done. Otherwise, loop.
 			
 			
 		# call bull and count if validation is success

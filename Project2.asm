@@ -5,21 +5,19 @@
 	random_max_value: 	.word 110									# used to set max number of word
 	bullPrint:			.asciiz "\nBull= "
 	cowPrint:			.asciiz "\nCow= "
+	#result:				.asciiz "NOAR"								# assigned word
 	input:				.asciiz "\nGet input: "
 	buffer:				.space	36
 	endl:				.asciiz "\n"
 	guess_word_index:			.word 0										# get the next index
 	correct_word_index:			.word 0										# count the correct_word_index till it reaches 4 then ends
-	end_word_index:				.word 0
 	bull: 				.word 0
 	cow:				.word 0
 	guess:				.asciiz										# holds the input of the user
 	inp:				.space 5
-	time:				.word 0
-	second:				.asciiz " (s)\n"
-	end_signal:			.asciiz "!end"
 .text
 
+	main:
 	  ## generate random number and get a random word from dictionary
 	 	jal generate_random_number							# get random number from 1 to 110 from $v0
  		sw $v0, random_number								# store random number return from function
@@ -29,12 +27,8 @@
  		li $v0, 4
  		syscall
  	  ################## end of generate random word ############################	
- 	  # get the starting time
-	  		li $v0, 30
-	  		syscall
-	  		sw $a0, time
  	  
- 	  main:
+ 	  
  	  # get input from user
  			#print out "Get input: "
 			li $v0, 4
@@ -49,8 +43,7 @@
 			move $t1,$a0 	#save string to t0
 			sw $t1, guess	#This needs to be recoded, it just copies the address of the buffer to guess.
 					#Saving the guess may not even be required
-					
- 	  		jal check_if_end
+ 	  	
  	  # validation code goes here					
  	  	#### Sean's code ####
 			#syscall
@@ -72,6 +65,8 @@
 		# print bull and cow
 		jal count_bulls_and_cows
 		
+		
+		
 		# print bull
 		li $v0, 4
 		la $a0, bullPrint
@@ -87,59 +82,10 @@
 		lw $a0, cow
 		li $v0, 1
 		syscall
+
 		
-		#reset and loop back
-		lw $t1, bull
-		beq $t1, 4, exit
-		
-		lw $t1, cow
-		add $t1, $zero, $zero
-		sw $t1, cow
-		
-		lw $t1, bull
-		add $t1, $zero, $zero
-		sw $t1, bull
-		
-		lw $t1, guess_word_index
-		add $t1, $zero, $zero
-		sw $t1, guess_word_index
-		
-		lw $t1, correct_word_index
-		add $t1, $zero, $zero
-		sw $t1, correct_word_index
-		
-		j main
-		
-		exit:
-			li $v0, 4
-			la $a0, endl
-			syscall
-		
-			li $v0, 30
-			syscall
-			
-			# print time (in second)
-			lw $t1, time
-			sub $t1, $a0, $t1
-			div $t1, $t1, 1000
-			sw $t1, time
-		
-			lw $a0, time
-			li $v0, 1
-			syscall
-		
-			li $v0, 4
-			la $a0, second
-			syscall
-			
-			#print the correct word
-			la $a0 , correct_word
- 			li $v0, 4
- 			syscall
-		
-			#end
-			li $v0, 10											# end of main, below of this code are all functions
-			syscall
+		li $v0, 10											# end of main, below of this code are all functions
+		syscall
 
 ###################################################################################################################################
 ##																																 ##
@@ -260,40 +206,4 @@
 	
 		endResult:
 			jr $ra										# jump back to main
-			
-	check_if_end:
-		la $t0, end_signal
-		lw $t1, guess
-	
-		lw $s0, end_word_index
-		lw $s1, guess_word_index
-		
-		bgt $s1, 3, exit
-		
-		addu $t0, $t0, $s0
-		lbu $t2, ($t0)
-	
-		addu $t1, $t1, $s1
-		lbu $t3, ($t1)
-		
-		lw $t0, end_word_index
-		addi $t0, $t0, 1
-		sw $t0, end_word_index
-		
-		lw $t0, guess_word_index
-		addi $t0, $t0, 1
-		sw $t0, guess_word_index
-		
-		beq $t2, $t3, check_if_end
-		
-	jumpBack:
-		lw $t1, end_word_index
-		add $t1, $zero, $zero
-		sw $t1, end_word_index
-		
-		lw $t1, guess_word_index
-		add $t1, $zero, $zero
-		sw $t1, guess_word_index
-		
-		jr $ra
 	########## end count bull and cow function ##################

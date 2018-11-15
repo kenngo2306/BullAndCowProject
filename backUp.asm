@@ -60,15 +60,16 @@
 				slti	$t1, $t0, 65 		# A
 				li	$t2, 90 		# Z
 				sgt	$t2, $t0, $t2
-				and	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
-				beq	$t1, $zero, next	# If yes...
+				or	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
+				bne	$t1, $zero, next	# If yes...
 				addi	$t0, $t0, 32 		# ...Upper to lower case
 			next:
 				slti	$t1, $t0, 97 		# a
 				li	$t2, 122		# z
 				slt	$t2, $t2, $t0
-				and	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
+				or	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
 				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
+				sb	$t0, ($t9)
 				
 				#checking  for byte done, loop:
 				

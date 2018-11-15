@@ -222,7 +222,7 @@
 			bne $t0, $t1, cowEqual						#if the 2 index dont match -> check for cow
 
 			la $t0, correct_word
-			lw $t1, guess
+			la $t1, guess
 	
 			lw $s0, correct_word_index
 			lw $s1, guess_word_index
@@ -246,7 +246,7 @@
 
 		cowEqual:										#when the correct_word_index != guess_word_index -> go here
 			la $t0, correct_word
-			lw $t1, guess
+			la $t1, guess
 			lw $s0, correct_word_index
 			lw $s1, guess_word_index
 	

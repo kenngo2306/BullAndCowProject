@@ -5,19 +5,22 @@
 	random_max_value: 	.word 110									# used to set max number of word
 	bullPrint:			.asciiz "\nBull= "
 	cowPrint:			.asciiz "\nCow= "
-	#result:				.asciiz "NOAR"								# assigned word
 	input:				.asciiz "\nGet input: "
-	buffer:				.space	36
+	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
 	guess_word_index:			.word 0										# get the next index
 	correct_word_index:			.word 0										# count the correct_word_index till it reaches 4 then ends
+	end_word_index:				.word 0
 	bull: 				.word 0
 	cow:				.word 0
-	guess:				.asciiz										# holds the input of the user
-	inp:				.space 5
+	.align 2 
+	guess:				.space 5
+	time:				.word 0
+	second:				.asciiz " (s)\n"
+	.align 2 
+	end_signal:			.ascii "!END"
 .text
 
-	main:
 	  ## generate random number and get a random word from dictionary
 	 	jal generate_random_number							# get random number from 1 to 110 from $v0
  		sw $v0, random_number								# store random number return from function
@@ -27,9 +30,12 @@
  		li $v0, 4
  		syscall
  	  ################## end of generate random word ############################	
+ 	  # get the starting time
+	  		li $v0, 30
+	  		syscall
+	  		sw $a0, time
  	  
- 	  #The rest of this needs to be on a loop, right?
- 	  
+ 	  main:
  	  # get input from user
  			#print out "Get input: "
 			li $v0, 4
@@ -38,56 +44,44 @@
 	
 			#get string
 			li $v0, 8
-			la $a0, buffer
+			la $a0, guess
 			li $a1, 5
 			syscall
-			move $t1,$a0 	#save string to t0
-			sw $t1, guess	#This needs to be recoded, it just copies the address of the buffer to guess.
-					#Saving the guess may not even be required
- 	  	
+
  	  # validation code goes here					
  	  	#### Sean's code ####
-			li	$t8, 0			# Potential problem: code reads bytes from most to least significant.
-			# li	$t8, 24			# If the syscall reads them the other way, it can be reverse by using
-							# the commented assembly.
-			li	$t7, 32
-			lw	$t9, buffer		# t9 is now the entire read word
-			srl	$t0, $t9, 24		# $t0 is the working char, wchar
-			# sllv	$t0, $t9, $t8
-			# srl	$t0, $t0, 24
-			li	$t1, 33 		# if it is ! ...
-			beq	$t0, $t1, giveup	# ... it might be !END, so jump to giveup.
+			la	$t9, guess
+			lw	$t1, ($t9)		# t9 is now the entire read word
+			lw	$t0, end_signal
+			beq	$t0, $t1, exit		# If the word is the end signal, exit.
+			addi	$t8, $t9, 4
 		validloop:
+				lb	$t0, ($t9)
 				slti	$t1, $t0, 65 		# A
 				li	$t2, 90 		# Z
-				slt	$t2, $t2, $t0
+				sgt	$t2, $t0, $t2
 				and	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
-				bne	$t1, $zero, next	# If yes...
+				beq	$t1, $zero, next	# If yes...
 				addi	$t0, $t0, 32 		# ...Upper to lower case
-				slti	$t0, $t1, 97 		# a
+			next:
+				slti	$t1, $t0, 97 		# a
 				li	$t2, 122		# z
 				slt	$t2, $t2, $t0
 				and	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
-				beq	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
+				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
 				
 				#checking  for byte done, loop:
 				
-				addi	$t8, $t8, 8		# Increment the byte being read by 1
-				# addi	$t8, $t8, -8
-				sllv	$t0, $t9, $t7		# remove left bytes
-				srl	$t0, $t0, 24		# remove right bytes and align
-				bne	$t8, $t7, validloop	# If $t8 was 32, no byte was read and we're done. Otherwise, loop.
+				addi	$t9, $t9, 1		# Increment the byte being read by 1
+				bne	$t8, $t9, validloop	# If the byte position is longer than the guess, we're finished.
 			
 			
 		# call bull and count if validation is success
-		
 		# play sound
 		jal success_sound
 		
 		# print bull and cow
 		jal count_bulls_and_cows
-		
-		
 		
 		# print bull
 		li $v0, 4
@@ -104,10 +98,65 @@
 		lw $a0, cow
 		li $v0, 1
 		syscall
-
 		
-		li $v0, 10											# end of main, below of this code are all functions
+		#reset and loop back
+		lw $t1, bull
+		beq $t1, 4, exit
+		
+		lw $t1, cow
+		add $t1, $zero, $zero
+		sw $t1, cow
+		
+		lw $t1, bull
+		add $t1, $zero, $zero
+		sw $t1, bull
+		
+		lw $t1, guess_word_index
+		add $t1, $zero, $zero
+		sw $t1, guess_word_index
+		
+		lw $t1, correct_word_index
+		add $t1, $zero, $zero
+		sw $t1, correct_word_index
+		
+		j main
+		
+	invalid:
+		li $v0, 4
+		la $a0, invalid_msg
 		syscall
+		j main
+		
+		exit:
+			li $v0, 4
+			la $a0, endl
+			syscall
+		
+			li $v0, 30
+			syscall
+			
+			# print time (in second)
+			lw $t1, time
+			sub $t1, $a0, $t1
+			div $t1, $t1, 1000
+			sw $t1, time
+		
+			lw $a0, time
+			li $v0, 1
+			syscall
+		
+			li $v0, 4
+			la $a0, second
+			syscall
+			
+			#print the correct word
+			la $a0 , correct_word
+ 			li $v0, 4
+ 			syscall
+		
+			#end
+			li $v0, 10											# end of main, below of this code are all functions
+			syscall
 
 ###################################################################################################################################
 ##																																 ##
@@ -228,4 +277,16 @@
 	
 		endResult:
 			jr $ra										# jump back to main
+			
+		
+	jumpBack:
+		lw $t1, end_word_index
+		add $t1, $zero, $zero
+		sw $t1, end_word_index
+		
+		lw $t1, guess_word_index
+		add $t1, $zero, $zero
+		sw $t1, guess_word_index
+		
+		jr $ra
 	########## end count bull and cow function ##################

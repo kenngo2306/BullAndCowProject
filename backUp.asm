@@ -6,18 +6,19 @@
 	bullPrint:			.asciiz "\nBull= "
 	cowPrint:			.asciiz "\nCow= "
 	input:				.asciiz "\nGet input: "
-	buffer:				.space	36
+	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
 	guess_word_index:			.word 0										# get the next index
 	correct_word_index:			.word 0										# count the correct_word_index till it reaches 4 then ends
 	end_word_index:				.word 0
 	bull: 				.word 0
 	cow:				.word 0
-	guess:				.asciiz										# holds the input of the user
-	inp:				.space 5
+	.align 2 
+	guess:				.space 5
 	time:				.word 0
 	second:				.asciiz " (s)\n"
-	end_signal:			.asciiz "!end"
+	.align 2 
+	end_signal:			.ascii "!END"
 .text
 
 	  ## generate random number and get a random word from dictionary
@@ -43,29 +44,39 @@
 	
 			#get string
 			li $v0, 8
-			la $a0, buffer
+			la $a0, guess
 			li $a1, 5
 			syscall
-			move $t1,$a0 	#save string to t0
-			sw $t1, guess	#This needs to be recoded, it just copies the address of the buffer to guess.
-					#Saving the guess may not even be required
-					
- 	  		jal check_if_end
+
  	  # validation code goes here					
  	  	#### Sean's code ####
-			#syscall
-			#lb	$t0, inp
-			#li	$t1, 33 # !
-			#beq	$t0, $t1, giveup
-			#slti	$t1, $t0, 97
-			#li	$t2, 122
-			#slt	$t2, $t2, $t0
-			#and	$t1, $t1, $t2
-			#beq
+			la	$t9, guess
+			lw	$t1, ($t9)		# t9 is now the entire read word
+			lw	$t0, end_signal
+			beq	$t0, $t1, exit		# If the word is the end signal, exit.
+			addi	$t8, $t9, 4
+		validloop:
+				lb	$t0, ($t9)
+				slti	$t1, $t0, 65 		# A
+				li	$t2, 90 		# Z
+				sgt	$t2, $t0, $t2
+				and	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
+				beq	$t1, $zero, next	# If yes...
+				addi	$t0, $t0, 32 		# ...Upper to lower case
+			next:
+				slti	$t1, $t0, 97 		# a
+				li	$t2, 122		# z
+				slt	$t2, $t2, $t0
+				and	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
+				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
+				
+				#checking  for byte done, loop:
+				
+				addi	$t9, $t9, 1		# Increment the byte being read by 1
+				bne	$t8, $t9, validloop	# If the byte position is longer than the guess, we're finished.
 			
 			
 		# call bull and count if validation is success
-		
 		# play sound
 		jal success_sound
 		
@@ -108,6 +119,12 @@
 		add $t1, $zero, $zero
 		sw $t1, correct_word_index
 		
+		j main
+		
+	invalid:
+		li $v0, 4
+		la $a0, invalid_msg
+		syscall
 		j main
 		
 		exit:
@@ -261,30 +278,6 @@
 		endResult:
 			jr $ra										# jump back to main
 			
-	check_if_end:
-		la $t0, end_signal
-		lw $t1, guess
-	
-		lw $s0, end_word_index
-		lw $s1, guess_word_index
-		
-		bgt $s1, 3, exit
-		
-		addu $t0, $t0, $s0
-		lbu $t2, ($t0)
-	
-		addu $t1, $t1, $s1
-		lbu $t3, ($t1)
-		
-		lw $t0, end_word_index
-		addi $t0, $t0, 1
-		sw $t0, end_word_index
-		
-		lw $t0, guess_word_index
-		addi $t0, $t0, 1
-		sw $t0, guess_word_index
-		
-		beq $t2, $t3, check_if_end
 		
 	jumpBack:
 		lw $t1, end_word_index

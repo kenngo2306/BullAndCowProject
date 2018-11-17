@@ -1,11 +1,13 @@
 .data
 	dict: 				.asciiz "zoicfoxyjawszipszingbruxcalxvextminxfauxoyezjogsquodcruxjagsjoysquinjudozigszagsgazebucklynxjoshjoeyhazepuckplexjigsquizjeuxjinxjockjackjumpjambjokyjivyjunkjimpjaukphizzoukzonkjukechezcozyzymemazyjoukqophjinkwhizfozyjokejakezebufujijowlpujajerkjaupjivejaggzeksjupefuzeputzhazykojizincfutzjubazerkjucojubequipwaxyjehujugsjowsdozylazyfluxmazeczarfazepixyjohnboxyjibejugajibsbizejuryjobsprezjabsfrizjapepoxyzepsjamsquayzanyyutzzapsqueyzarfquaghadj"
-	correct_word: 		.space 4									# used to store correct word 
+	correct_word: 		.space 4									# used to store correct word
 	random_number: 		.word 4										# used to store random number
 	random_max_value: 	.word 110									# used to set max number of word
-	bullPrint:			.asciiz "\nBull= "
-	cowPrint:			.asciiz "\nCow= "
-	input:				.asciiz "\nGet input: "
+	welcome_message:		.asciiz "Welcome to Bulls & Cows!\nMake 4 letter guesses to determine the hidden word"
+	bullPrint:			.asciiz "\nBulls: "
+	cowPrint:			.asciiz "\nCows: "
+	input:				.asciiz "\n\nGuess #"
+	inputColon:				.asciiz ":"
 	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
 	guess_word_index:			.word 0										# get the next index
@@ -13,6 +15,7 @@
 	end_word_index:				.word 0
 	bull: 				.word 0
 	cow:				.word 0
+	guessCount: 			.word 0
 	.align 2 
 	guess:				.space 5
 	time:				.word 0
@@ -26,20 +29,31 @@
  		sw $v0, random_number								# store random number return from function
  		jal get_correct_word_from_random_number				# get correct word in dict from random_number
  	
- 		la $a0 , correct_word								# print out random word in dictionary
+ 		la $a0 , correct_word	#TO-DO: swap "correct_word" with "welcome_message"
  		li $v0, 4
  		syscall
- 	  ################## end of generate random word ############################	
+ 	  ################## end of generate random word ############################
  	  # get the starting time
 	  		li $v0, 30
 	  		syscall
 	  		sw $a0, time
- 	  
+
  	  main:
  	  # get input from user
- 			#print out "Get input: "
-			li $v0, 4
+			li $v0, 4 #Prints "Guess #"
 			la $a0, input
+			syscall
+			
+			lw $t0, guessCount #Adds 1 to the number of guesses
+			addi $t0, $t0, 1
+			sw $t0, guessCount 
+			
+			li $v0, 1 #Prints Number of guesses before colon
+			move $a0,$t0
+			syscall
+			
+			li $v0, 4 #Prints out colon
+			la $a0, inputColon
 			syscall
 	
 			#get string

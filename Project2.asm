@@ -6,6 +6,7 @@
 	bullPrint:			.asciiz "\nBull= "
 	cowPrint:			.asciiz "\nCow= "
 	input:				.asciiz "\nGet input: "
+	duplicates_msg:			.asciiz "\nNo duplicate letters are allowed."
 	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
 	guess_word_index:			.word 0										# get the next index
@@ -55,6 +56,7 @@
 			lw	$t0, end_signal
 			beq	$t0, $t1, exit		# If the word is the end signal, exit.
 			addi	$t8, $t9, 4
+			addi	$t7, $t9, 0
 		validloop:
 				lb	$t0, ($t9)
 				slti	$t1, $t0, 65 		# A
@@ -71,8 +73,17 @@
 				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
 				sb	$t0, ($t9)
 				
-				#checking  for byte done, loop:
+				addi	$t6, $t9, -1
+			duploop:
+					slt	$t1, $t7, $t6
+					beq	$t1, $zero, dupexit
+					lb	$t1, ($t6)
+					beq	$t1, $t0, duplicates
+					addi	$t6, $t6, -1
+					j duploop		
 				
+				#checking  for byte done, loop:
+			dupexit:
 				addi	$t9, $t9, 1		# Increment the byte being read by 1
 				bne	$t8, $t9, validloop	# If the byte position is longer than the guess, we're finished.
 			
@@ -121,6 +132,14 @@
 		sw $t1, correct_word_index
 		
 		j main
+		
+	duplicates:
+		li $v0, 4
+		la $a0, duplicates_msg
+		syscall
+		j main
+		
+		
 		
 	invalid:
 		li $v0, 4

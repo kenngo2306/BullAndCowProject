@@ -30,7 +30,7 @@
  		sw $v0, random_number								# store random number return from function
  		jal get_correct_word_from_random_number				# get correct word in dict from random_number
  	
- 		la $a0 , correct_word	#TO-DO: swap "correct_word" with "welcome_message"
+ 		la $a0 , welcome_message
  		li $v0, 4
  		syscall
  	  ################## end of generate random word ############################

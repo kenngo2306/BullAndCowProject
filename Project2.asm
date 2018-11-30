@@ -26,6 +26,7 @@
 .text
 
 	  ## generate random number and get a random word from dictionary
+	    jal welcome_sound
 	 	jal generate_random_number							# get random number from 1 to 110 from $v0
  		sw $v0, random_number								# store random number return from function
  		jal get_correct_word_from_random_number				# get correct word in dict from random_number
@@ -33,6 +34,8 @@
  		la $a0 , welcome_message
  		li $v0, 4
  		syscall
+ 		
+ 		
  	  ################## end of generate random word ############################
  	  # get the starting time
 	  		li $v0, 30
@@ -324,3 +327,118 @@
 		
 		jr $ra
 	########## end count bull and cow function ##################
+	
+	welcome_sound:										# MIDI sound
+		li $v0, 31
+		li $a0, 72		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+
+		li $v0, 31
+		li $a0, 74		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 76		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall		
+
+		li $v0, 31
+		li $a0, 78		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 80		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 82		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+
+		li $v0, 31
+		li $a0, 84		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 86		 								# C pitch (0-127)
+		li $a1, 4000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 86		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+
+		li $v0, 31
+		li $a0, 84		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 82		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall		
+
+		li $v0, 31
+		li $a0, 80		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 78		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 76		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+
+		li $v0, 31
+		li $a0, 74		 								# C pitch (0-127)
+		li $a1, 2000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+		
+		li $v0, 31
+		li $a0, 72		 								# C pitch (0-127)
+		li $a1, 4000 									# duration in milliseconds
+		li $a2, 8										# instrument (0-127)
+		li $a3, 100 									# volume (0-127)
+		syscall
+																																																																							
+		jr $ra

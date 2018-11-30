@@ -11,6 +11,8 @@
 	duplicates_msg:			.asciiz "\nNo duplicate letters are allowed."
 	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
+	time_output:			.asciiz "It took"
+	correctWord_output:		.asciiz "The correct word is : "
 	guess_word_index:			.word 0										# get the next index
 	correct_word_index:			.word 0										# count the correct_word_index till it reaches 4 then ends
 	end_word_index:				.word 0
@@ -177,7 +179,11 @@
 			sub $t1, $a0, $t1
 			div $t1, $t1, 1000
 			sw $t1, time
-		
+			
+			li $v0, 4
+			la $a0, time_output
+			syscall
+			
 			lw $a0, time
 			li $v0, 1
 			syscall
@@ -187,6 +193,10 @@
 			syscall
 			
 			#print the correct word
+			li $v0, 4
+			la $a0, correctWord_output
+			syscall
+			
 			la $a0 , correct_word
  			li $v0, 4
  			syscall

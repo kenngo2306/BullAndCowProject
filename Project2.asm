@@ -11,7 +11,7 @@
 	duplicates_msg:			.asciiz "\nNo duplicate letters are allowed."
 	invalid_msg:			.asciiz "\nInput was invalid, please only enter letters."
 	endl:				.asciiz "\n"
-	time_output:			.asciiz "It took"
+	time_output:			.asciiz "It took "
 	correctWord_output:		.asciiz "The correct word is : "
 	guess_word_index:			.word 0										# get the next index
 	correct_word_index:			.word 0										# count the correct_word_index till it reaches 4 then ends
@@ -22,7 +22,7 @@
 	.align 2 
 	guess:				.space 5
 	time:				.word 0
-	second:				.asciiz " (s)\n"
+	second:				.asciiz " seconds\n"
 	.align 2 
 	end_signal:			.ascii "!END"
 .text

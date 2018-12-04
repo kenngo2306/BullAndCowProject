@@ -92,13 +92,13 @@
 				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
 				sb	$t0, ($t9)
 				
-				addi	$t6, $t9, -1
+				addi	$t6, $t9, 0
 			duploop:
 					slt	$t1, $t7, $t6
 					beq	$t1, $zero, dupexit
+					addi	$t6, $t6, -1
 					lb	$t1, ($t6)
 					beq	$t1, $t0, duplicates
-					addi	$t6, $t6, -1
 					j duploop		
 				
 				#checking  for byte done, loop:

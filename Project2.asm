@@ -73,7 +73,6 @@
 			la	$t9, guess
 			addi	$t8, $t9, 4
 			addi	$t7, $t9, 0
-			addi	$t7, $t9, 1
 		tolowerloop:
 				lb	$t0, ($t9)
 				slti	$t1, $t0, 65 		# A
@@ -91,17 +90,6 @@
 			lw	$t1, ($t9)		# t9 is now the entire read word
 			lw	$t0, end_signal
 			beq	$t0, $t1, exit		# If the word is the end signal, exit.
-			
-			lb	$t0, ($t9)
-			slti	$t1, $t0, 65 		# A
-			li	$t2, 90 		# Z
-			sgt	$t2, $t0, $t2
-			or	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
-			bne	$t1, $zero, next1tl	# If yes...
-			addi	$t0, $t0, 32 		# ...Upper to lower case
-			sb	$t0, ($t9)
-		next1tl:
-			
 		validloop:
 				lb	$t0, ($t9)
 				slti	$t1, $t0, 97 		# a

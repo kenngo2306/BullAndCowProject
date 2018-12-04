@@ -24,7 +24,7 @@
 	time:				.word 0
 	second:				.asciiz " seconds\n"
 	.align 2 
-	end_signal:			.ascii "!END"
+	end_signal:			.ascii "!end"
 .text
 
 	  ## generate random number and get a random word from dictionary
@@ -71,26 +71,44 @@
  	  # validation code goes here					
  	  	#### Sean's code ####
 			la	$t9, guess
-			lw	$t1, ($t9)		# t9 is now the entire read word
-			lw	$t0, end_signal
-			beq	$t0, $t1, exit		# If the word is the end signal, exit.
 			addi	$t8, $t9, 4
 			addi	$t7, $t9, 0
-		validloop:
+			addi	$t7, $t9, 1
+		tolowerloop:
 				lb	$t0, ($t9)
 				slti	$t1, $t0, 65 		# A
 				li	$t2, 90 		# Z
 				sgt	$t2, $t0, $t2
 				or	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
-				bne	$t1, $zero, next	# If yes...
+				bne	$t1, $zero, nexttl	# If yes...
 				addi	$t0, $t0, 32 		# ...Upper to lower case
-			next:
+				sb	$t0, ($t9)
+			nexttl:
+				addi	$t9, $t9, 1		# Increment the byte being read by 1
+				bne	$t8, $t9, tolowerloop	# If the byte position is longer than the guess, we're finished.
+			addi	$t9, $t9, -4
+			
+			lw	$t1, ($t9)		# t9 is now the entire read word
+			lw	$t0, end_signal
+			beq	$t0, $t1, exit		# If the word is the end signal, exit.
+			
+			lb	$t0, ($t9)
+			slti	$t1, $t0, 65 		# A
+			li	$t2, 90 		# Z
+			sgt	$t2, $t0, $t2
+			or	$t1, $t1, $t2		# Is wchar between A and Z inclusive? i.e. is it capitalized?
+			bne	$t1, $zero, next1tl	# If yes...
+			addi	$t0, $t0, 32 		# ...Upper to lower case
+			sb	$t0, ($t9)
+		next1tl:
+			
+		validloop:
+				lb	$t0, ($t9)
 				slti	$t1, $t0, 97 		# a
 				li	$t2, 122		# z
 				slt	$t2, $t2, $t0
 				or	$t1, $t1, $t2		# Is wchar between a and z inclusive? i.e. was it a letter?
 				bne	$t1, $zero, invalid	# If it wasn't a valid letter, go somewhere to print an error message.
-				sb	$t0, ($t9)
 				
 				addi	$t6, $t9, 0
 			duploop:
